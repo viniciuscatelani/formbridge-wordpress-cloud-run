@@ -9,7 +9,15 @@ designed for real form-to-spreadsheet workflows such as applications, contest
 rubrics, internal evaluations, surveys, and lead capture.
 
 > **Demo:** D&D character registration  
-> **Reusable core:** WordPress → secure Python API → Google Sheets
+> **Reusable core:** WordPress -> secure Python API -> Google Sheets
+
+## Current release
+
+- WordPress plugin: `2.0.1`
+- FastAPI: `2.0.0`
+- Automated tests: `10 passing`
+- GitHub Actions: passing on `main`
+- Cloud Run v2: deployed and verified against Google Sheets
 
 ## What this project demonstrates
 
@@ -67,6 +75,10 @@ The example collects:
 FastAPI calculates each D&D modifier with `floor((score - 10) / 2)`, totals the
 ability scores, and returns a stable `FB-...` submission ID. Retrying a request
 with the same `X-Idempotency-Key` does not append a second row.
+
+The WordPress form previews every modifier while the character is being built,
+using explicit badges such as `Modifier +4` or `Modifier -1`. FastAPI repeats
+the calculation server-side so browser values are never trusted as results.
 
 Google Sheets receives:
 
@@ -133,10 +145,14 @@ Open:
 
 - WordPress form: <http://localhost:8080/guild-registry/>
 - WordPress administration: <http://localhost:8080/wp-admin/>
-- FastAPI documentation: <http://localhost:8000/docs>
+- Local FastAPI documentation: <http://localhost:8000/docs>
 
 The local administrator credentials above are intentionally disposable and must
 never be reused in a hosted environment.
+
+Use the WordPress page on port `8080` for submissions. The standalone page on
+port `8000` calls the protected API directly and therefore receives HTTP 401;
+browser JavaScript intentionally does not contain the integration secret.
 
 Stop the stack while preserving its volumes:
 
@@ -162,8 +178,10 @@ python -m uvicorn app.main:app --reload
 python -m pytest -q
 ```
 
-The successful submission path is mocked in the automated suite, so tests do
-not write rows to Google Sheets.
+The suite currently contains 10 tests covering authorization, validation,
+ability modifiers, ability totals, weighted scoring, idempotent duplicate
+responses, and real CSV duplicate prevention. External Google Sheets writes are
+mocked, so tests do not modify the configured spreadsheet.
 
 ## Cloud deployment
 
@@ -183,6 +201,14 @@ The API now includes a business-oriented weighted judging route at
 weight; weights must total `1.0`. FastAPI normalizes mixed scoring scales and
 saves both the final score and auditable criterion JSON.
 
+This is currently an API-only second workflow. Character submissions populate
+`Characters`; they do not populate `Evaluations`. The `Evaluations` tab receives
+only requests to `POST /api/evaluations`. A dedicated WordPress evaluation form
+is a documented future extension.
+
+The `Dashboard` tab summarizes both workflows and currently includes KPI
+formulas plus a native characters-by-class chart.
+
 Possible future extensions include race/species, background, proficiencies,
 equipment, judge authentication, contest deadlines, or a dedicated rubric UI.
 
@@ -197,7 +223,9 @@ or a useful spreadsheet dashboard—not merely a larger number of text fields.
 - FastAPI-to-Google-Sheets integration: verified
 - WordPress-to-Cloud-Run-to-Google-Sheets integration: verified
 - Cloud Run secret rejection: verified with HTTP 401
-- Automated tests: passing
+- Automated tests: 10 passing locally and in GitHub Actions
 - Idempotent duplicate protection: verified
 - Weighted-rubric calculation: verified
-- GitHub Actions CI: configured
+- GitHub Actions CI: configured and verified
+- WordPress live modifier preview: implemented in plugin `2.0.1`
+- Evaluation frontend: not implemented; API and storage are complete

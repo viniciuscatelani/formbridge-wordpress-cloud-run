@@ -6,6 +6,8 @@ a local or hosted WordPress installation to it.
 Replace every uppercase placeholder with your own value. Never commit `.env`,
 `credentials.json`, or integration secrets.
 
+This guide reflects FormBridge FastAPI `2.0.0` and WordPress plugin `2.0.1`.
+
 ## 1. Select a Google Cloud project
 
 ```powershell
@@ -59,6 +61,10 @@ tabs automatically:
 - `Dashboard`: formula-driven KPIs and a characters-by-class chart
 
 Existing rows are preserved when headers are upgraded.
+
+Character submissions write only to `Characters`. Weighted rubric submissions
+sent to `POST /api/evaluations` write only to `Evaluations`; the project does not
+yet include a WordPress evaluation-form shortcode.
 
 ## 4. Create the WordPress integration secret
 
@@ -185,6 +191,15 @@ The plugin prefers server environment variables and does not expose them to its
 JavaScript. Submit at <http://localhost:8080/guild-registry/>, then confirm HTTP
 201 in Cloud Run logs and verify the row in Google Sheets.
 
+If those environment variables are absent, Compose defaults WordPress to the
+local API at `http://api:8000` with the local development secret. Run
+`docker compose up -d --force-recreate wordpress` after changing the variables;
+ordinary `docker compose up -d` may retain an existing container environment.
+
+Do not test submissions through <http://localhost:8000/>. That standalone page
+does not have the server-side secret and is expected to receive HTTP 401. Use
+the WordPress page on port `8080`.
+
 ## 8. Connect hosted WordPress
 
 Docker is not required on the hosted WordPress server. Install a ZIP containing
@@ -206,6 +221,10 @@ If environment variables are unavailable, constants may be defined once in
 `wp-config.php`. Never put the integration secret in HTML or JavaScript.
 
 The hosting provider must permit custom plugins and outbound HTTPS requests.
+
+The plugin ZIP should contain the `dnd-character-registry` directory itself,
+not the repository root. After activation, verify that the installed plugin
+reports version `2.0.1` so browsers receive the current ability-score JavaScript.
 
 ## 9. Rotate the integration secret
 
@@ -245,3 +264,23 @@ gcloud run services delete dnd-registry-api `
 
 Deleting Cloud Run does not automatically delete Artifact Registry images or
 Secret Manager secrets.
+
+## 11. Routine local startup
+
+After Docker Desktop starts:
+
+```powershell
+docker compose up -d
+docker compose ps
+```
+
+All three services should be running and `database` should report `healthy`.
+MariaDB stores WordPress pages, users, settings, and plugin state; Google Sheets
+stores FormBridge submissions. Stop cleanly while preserving WordPress data:
+
+```powershell
+docker compose down
+```
+
+Avoid `docker compose down --volumes` unless the local WordPress installation
+and database should be permanently reset.

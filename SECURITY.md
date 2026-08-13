@@ -1,5 +1,7 @@
 # Security notes
 
+This document reflects FastAPI `2.0.0` and WordPress plugin `2.0.1`.
+
 ## Current model
 
 - The browser sends form data only to WordPress.
@@ -8,6 +10,8 @@
 - FastAPI validates the payload again and compares secrets in constant time.
 - Client-generated idempotency keys prevent ordinary network retries from
   appending duplicate rows.
+- Ability modifiers, totals, and weighted evaluation scores are recalculated by
+  FastAPI; displayed browser calculations are previews only.
 - Cloud Run uses its assigned Google service account through Application Default
   Credentials.
 - The Google Sheet is shared only with authorized people and the runtime service
@@ -26,6 +30,10 @@
 - Spreadsheet-based duplicate checks are sufficient for this demonstration but
   are not atomic under heavy concurrent traffic; production scale should use a
   transactional idempotency store.
+- Idempotency prevents retry duplicates, not intentional repeat submissions
+  created with new keys.
+- The current weighted evaluation workflow is API-only; it does not authenticate
+  an individual judge or provide a WordPress evaluation UI.
 
 ## Before real contest or company use
 
@@ -34,8 +42,8 @@
 - Require authenticated judges or another verifiable participant identity.
 - Replace the static header with timestamped HMAC request signing to reduce
   replay risk.
-- Add rate limiting, deadline enforcement, duplicate detection, and idempotency
-  keys.
+- Add rate limiting, deadline enforcement, and business-level duplicate rules
+  such as one evaluation per authenticated judge and subject.
 - Store raw ratings and the server-calculated weighted result for auditability.
 - Protect spreadsheet headers/formulas and restrict sharing.
 - Add structured logs, monitoring, and alerts without logging secrets or
