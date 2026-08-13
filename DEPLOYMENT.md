@@ -51,6 +51,15 @@ dnd-api@YOUR_PROJECT_ID.iam.gserviceaccount.com
 Share the target Google Sheet with that address as an editor. No JSON key is
 created for Cloud Run.
 
+On the first successful v2 submission, FormBridge creates or upgrades these
+tabs automatically:
+
+- `Characters`: raw character data, modifiers, totals, and submission IDs
+- `Evaluations`: weighted rubric results and auditable criterion JSON
+- `Dashboard`: formula-driven KPIs and a characters-by-class chart
+
+Existing rows are preserved when headers are upgraded.
+
 ## 4. Create the WordPress integration secret
 
 The following works with older Windows PowerShell versions and does not print
@@ -150,6 +159,10 @@ gcloud logging read `
   --order=desc
 ```
 
+The API reference at `YOUR_CLOUD_RUN_URL/docs` documents both `/api/characters`
+and `/api/evaluations`. Clients should send a stable `X-Idempotency-Key` for
+each logical submission and reuse it only when retrying that submission.
+
 ## 7. Connect local WordPress to Cloud Run
 
 Retrieve the secret into the current PowerShell process without displaying it:
@@ -232,4 +245,3 @@ gcloud run services delete dnd-registry-api `
 
 Deleting Cloud Run does not automatically delete Artifact Registry images or
 Secret Manager secrets.
-

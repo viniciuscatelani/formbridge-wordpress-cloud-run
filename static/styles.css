@@ -69,6 +69,13 @@ h1 span { color: var(--gold); }
 h2 { font-size: 30px; }
 form { display: grid; gap: 20px; }
 label { display: grid; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+.abilities { border: 1px solid #cfc3ae; padding: 14px; margin: 0; }
+.abilities legend { padding: 0 8px; font-size: 12px; font-weight: 600; }
+.abilities legend span { color: var(--muted); font-weight: 400; }
+.ability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ability-grid label { text-align: center; }
+.ability-grid input { text-align: center; }
+.ability-grid output { color: var(--wine); font-weight: 700; }
 .optional { float: right; color: var(--muted); font-weight: 400; }
 .field-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
 input, select, textarea {
@@ -98,6 +105,6 @@ button:disabled { opacity: .65; cursor: wait; }
 @media (max-width: 430px) {
   .page-shell { width: min(100% - 24px, 1120px); }
   .field-row { grid-template-columns: 1fr; }
+  .ability-grid { grid-template-columns: repeat(2, 1fr); }
   .form-card { padding: 32px 24px; }
 }
-

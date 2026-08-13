@@ -31,6 +31,12 @@
   border-radius: 0; background: rgba(255,255,255,.6); font: 14px Arial, sans-serif;
 }
 .dnd-registry__row { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
+.dnd-registry__abilities { border: 1px solid #cbbda6; padding: 14px; margin: 0; }
+.dnd-registry__abilities legend { padding: 0 7px; font: 600 12px Arial, sans-serif; }
+.dnd-registry__ability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.dnd-registry__ability-grid label { grid-template-columns: 1fr; text-align: center; }
+.dnd-registry__ability-grid input { text-align: center; }
+.dnd-registry__ability-grid output { color: var(--wine); font-weight: 700; }
 .dnd-registry button {
   border: 0; padding: 15px 17px; background: var(--wine); color: white;
   display: flex; justify-content: space-between; cursor: pointer;
@@ -43,5 +49,5 @@
 @media (max-width: 720px) {
   .dnd-registry { grid-template-columns: 1fr; }
   .dnd-registry__intro, .dnd-registry__form { padding: 36px 28px; }
+  .dnd-registry__ability-grid { grid-template-columns: repeat(2, 1fr); }
 }
-

@@ -6,6 +6,8 @@
 - WordPress validates and sanitizes fields before relaying them.
 - WordPress authenticates to Cloud Run with a server-side integration secret.
 - FastAPI validates the payload again and compares secrets in constant time.
+- Client-generated idempotency keys prevent ordinary network retries from
+  appending duplicate rows.
 - Cloud Run uses its assigned Google service account through Application Default
   Credentials.
 - The Google Sheet is shared only with authorized people and the runtime service
@@ -21,6 +23,9 @@
   use Google IAM easily; the application secret protects the write endpoint.
 - CORS is not authentication. This design does not rely on CORS for protection.
 - Google Sheets is convenient storage, not a transactional database.
+- Spreadsheet-based duplicate checks are sufficient for this demonstration but
+  are not atomic under heavy concurrent traffic; production scale should use a
+  transactional idempotency store.
 
 ## Before real contest or company use
 
@@ -43,4 +48,3 @@
 Do not include credentials, private spreadsheet data, or active secret values in
 an issue. Revoke or rotate exposed credentials first, then report the behavior
 using redacted reproduction steps.
-

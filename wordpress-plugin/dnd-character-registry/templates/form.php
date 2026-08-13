@@ -12,6 +12,11 @@
       <input name="name" type="text" maxlength="80" required>
     </label>
 
+    <label>
+      Player name
+      <input name="player_name" type="text" maxlength="80" placeholder="Who commands this hero?" required>
+    </label>
+
     <div class="dnd-registry__row">
       <label>
         Class
@@ -39,6 +44,18 @@
       </select>
     </label>
 
+    <fieldset class="dnd-registry__abilities">
+      <legend>Ability scores <small>1–20</small></legend>
+      <div class="dnd-registry__ability-grid">
+        <label>STR <input name="strength" type="number" min="1" max="20" value="10" required><output data-modifier="strength">+0</output></label>
+        <label>DEX <input name="dexterity" type="number" min="1" max="20" value="10" required><output data-modifier="dexterity">+0</output></label>
+        <label>CON <input name="constitution" type="number" min="1" max="20" value="10" required><output data-modifier="constitution">+0</output></label>
+        <label>INT <input name="intelligence" type="number" min="1" max="20" value="10" required><output data-modifier="intelligence">+0</output></label>
+        <label>WIS <input name="wisdom" type="number" min="1" max="20" value="10" required><output data-modifier="wisdom">+0</output></label>
+        <label>CHA <input name="charisma" type="number" min="1" max="20" value="10" required><output data-modifier="charisma">+0</output></label>
+      </div>
+    </fieldset>
+
     <label>
       A note for the guild <small>Optional</small>
       <textarea name="notes" maxlength="500" rows="4"></textarea>
@@ -48,4 +65,3 @@
     <p id="dnd-registry-status" role="status" aria-live="polite"></p>
   </form>
 </section>
-

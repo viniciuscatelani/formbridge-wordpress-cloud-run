@@ -17,11 +17,17 @@ rubrics, internal evaluations, surveys, and lead capture.
 - Browser-to-WordPress submission through the WordPress REST API
 - Secure server-to-server communication between WordPress and FastAPI
 - Pydantic validation and structured API errors
+- Server-calculated D&D ability modifiers and ability totals
+- Stable submission IDs and idempotent retry protection
+- A reusable weighted-rubric API for evaluations and contests
 - Google Sheets writes through a dedicated service account
+- Automatic `Characters`, `Evaluations`, and `Dashboard` sheet setup
+- Formula-driven KPIs and a class-distribution chart
 - Keyless Google authentication on Cloud Run
 - Secret Manager integration
 - Docker Compose development with WordPress and MariaDB
 - Automated API tests
+- GitHub Actions continuous integration
 - A swappable local CSV storage backend
 
 ## Architecture
@@ -55,11 +61,18 @@ The example collects:
 - Level from 1 to 20
 - Alignment
 - Optional notes
+- Player name
+- Six ability scores from 1 to 20
+
+FastAPI calculates each D&D modifier with `floor((score - 10) / 2)`, totals the
+ability scores, and returns a stable `FB-...` submission ID. Retrying a request
+with the same `X-Idempotency-Key` does not append a second row.
 
 Google Sheets receives:
 
 ```text
-Submitted at | Name | Class | Level | Alignment | Notes
+Idempotency Key | Submission ID | Submitted At | Character | Player | Class
+Level | Alignment | STR/DEX/CON/INT/WIS/CHA and modifiers | Ability Total | Notes
 ```
 
 ## Technology
@@ -77,6 +90,7 @@ Submitted at | Name | Class | Level | Alignment | Notes
 app/                         FastAPI application and storage adapters
 static/                      Standalone FastAPI demo form
 tests/                       Automated backend tests
+.github/workflows/ci.yml     CI pipeline for every push and pull request
 wordpress-plugin/
   dnd-character-registry/    Installable WordPress plugin source
 Dockerfile                   Cloud Run/API container
@@ -164,11 +178,13 @@ configuration, verification, and cleanup, is in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Adapting this project
 
-The current character form is intentionally simple. A stronger portfolio
-version could add ability scores, race/species, background, proficiencies,
-equipment, or calculated modifiers. A more business-oriented evolution would
-replace the D&D model with a weighted judging rubric and calculate a final score
-in FastAPI before saving both raw ratings and results.
+The API now includes a business-oriented weighted judging route at
+`POST /api/evaluations`. Each criterion supplies a score, maximum score, and
+weight; weights must total `1.0`. FastAPI normalizes mixed scoring scales and
+saves both the final score and auditable criterion JSON.
+
+Possible future extensions include race/species, background, proficiencies,
+equipment, judge authentication, contest deadlines, or a dedicated rubric UI.
 
 The architecture is already the most valuable part of the project. Expanding
 the domain model is worthwhile when it demonstrates additional engineering,
@@ -182,3 +198,6 @@ or a useful spreadsheet dashboard—not merely a larger number of text fields.
 - WordPress-to-Cloud-Run-to-Google-Sheets integration: verified
 - Cloud Run secret rejection: verified with HTTP 401
 - Automated tests: passing
+- Idempotent duplicate protection: verified
+- Weighted-rubric calculation: verified
+- GitHub Actions CI: configured

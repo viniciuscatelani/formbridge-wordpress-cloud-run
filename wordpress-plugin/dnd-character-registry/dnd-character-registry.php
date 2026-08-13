@@ -78,9 +78,18 @@ function dnd_registry_submit_character(WP_REST_Request $request)
     $input = $request->get_json_params();
     $payload = array(
         'name'            => sanitize_text_field($input['name'] ?? ''),
+        'player_name'     => sanitize_text_field($input['player_name'] ?? 'Anonymous'),
         'character_class' => sanitize_text_field($input['character_class'] ?? ''),
         'level'           => absint($input['level'] ?? 0),
         'alignment'       => sanitize_text_field($input['alignment'] ?? ''),
+        'abilities'       => array(
+            'strength'     => absint($input['abilities']['strength'] ?? 0),
+            'dexterity'    => absint($input['abilities']['dexterity'] ?? 0),
+            'constitution' => absint($input['abilities']['constitution'] ?? 0),
+            'intelligence' => absint($input['abilities']['intelligence'] ?? 0),
+            'wisdom'       => absint($input['abilities']['wisdom'] ?? 0),
+            'charisma'     => absint($input['abilities']['charisma'] ?? 0),
+        ),
         'notes'           => sanitize_textarea_field($input['notes'] ?? ''),
     );
 
@@ -98,6 +107,20 @@ function dnd_registry_submit_character(WP_REST_Request $request)
         );
     }
 
+    foreach ($payload['abilities'] as $score) {
+        if ($score < 1 || $score > 20) {
+            return new WP_Error(
+                'dnd_invalid_ability',
+                'Every ability score must be between 1 and 20.',
+                array('status' => 422)
+            );
+        }
+    }
+
+    $idempotency_key = sanitize_text_field(
+        $request->get_header('X-Idempotency-Key')
+    );
+
     $response = wp_remote_post(
         rtrim($api_url, '/') . '/api/characters',
         array(
@@ -105,6 +128,7 @@ function dnd_registry_submit_character(WP_REST_Request $request)
             'headers' => array(
                 'Content-Type'         => 'application/json',
                 'X-Integration-Secret' => $integration_secret,
+                'X-Idempotency-Key'    => $idempotency_key,
             ),
             'body' => wp_json_encode($payload),
         )
