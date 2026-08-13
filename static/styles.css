@@ -75,7 +75,10 @@ label { display: grid; gap: 8px; font-size: 12px; font-weight: 600; letter-spaci
 .ability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .ability-grid label { text-align: center; }
 .ability-grid input { text-align: center; }
-.ability-grid output { color: var(--wine); font-weight: 700; }
+.ability-grid output {
+  padding: 5px 7px; background: rgba(123,41,55,.09); color: var(--wine);
+  border: 1px solid rgba(123,41,55,.2); font-weight: 700;
+}
 .optional { float: right; color: var(--muted); font-weight: 400; }
 .field-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
 input, select, textarea {

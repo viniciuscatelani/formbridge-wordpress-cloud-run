@@ -8,7 +8,7 @@ form.querySelectorAll("[data-modifier]").forEach((output) => {
   const input = form.elements[output.dataset.modifier];
   const update = () => {
     const value = modifier(input.value);
-    output.textContent = value >= 0 ? `+${value}` : String(value);
+    output.textContent = `Modifier ${value >= 0 ? `+${value}` : value}`;
   };
   input.addEventListener("input", update);
   update();
@@ -53,7 +53,7 @@ form.addEventListener("submit", async (event) => {
     statusMessage.className = "success";
     statusMessage.textContent = result.message;
     form.reset();
-    form.querySelectorAll("[data-modifier]").forEach((output) => output.textContent = "+0");
+    form.querySelectorAll("[data-modifier]").forEach((output) => output.textContent = "Modifier +0");
     idempotencyKey = crypto.randomUUID();
   } catch (error) {
     statusMessage.textContent = error.message;

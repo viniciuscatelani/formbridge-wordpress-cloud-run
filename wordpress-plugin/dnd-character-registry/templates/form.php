@@ -47,12 +47,12 @@
     <fieldset class="dnd-registry__abilities">
       <legend>Ability scores <small>1–20</small></legend>
       <div class="dnd-registry__ability-grid">
-        <label>STR <input name="strength" type="number" min="1" max="20" value="10" required><output data-modifier="strength">+0</output></label>
-        <label>DEX <input name="dexterity" type="number" min="1" max="20" value="10" required><output data-modifier="dexterity">+0</output></label>
-        <label>CON <input name="constitution" type="number" min="1" max="20" value="10" required><output data-modifier="constitution">+0</output></label>
-        <label>INT <input name="intelligence" type="number" min="1" max="20" value="10" required><output data-modifier="intelligence">+0</output></label>
-        <label>WIS <input name="wisdom" type="number" min="1" max="20" value="10" required><output data-modifier="wisdom">+0</output></label>
-        <label>CHA <input name="charisma" type="number" min="1" max="20" value="10" required><output data-modifier="charisma">+0</output></label>
+        <label>STR <input name="strength" type="number" min="1" max="20" value="10" required><output data-modifier="strength" aria-live="polite">Modifier +0</output></label>
+        <label>DEX <input name="dexterity" type="number" min="1" max="20" value="10" required><output data-modifier="dexterity" aria-live="polite">Modifier +0</output></label>
+        <label>CON <input name="constitution" type="number" min="1" max="20" value="10" required><output data-modifier="constitution" aria-live="polite">Modifier +0</output></label>
+        <label>INT <input name="intelligence" type="number" min="1" max="20" value="10" required><output data-modifier="intelligence" aria-live="polite">Modifier +0</output></label>
+        <label>WIS <input name="wisdom" type="number" min="1" max="20" value="10" required><output data-modifier="wisdom" aria-live="polite">Modifier +0</output></label>
+        <label>CHA <input name="charisma" type="number" min="1" max="20" value="10" required><output data-modifier="charisma" aria-live="polite">Modifier +0</output></label>
       </div>
     </fieldset>
 

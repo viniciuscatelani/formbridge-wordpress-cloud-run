@@ -36,7 +36,10 @@
 .dnd-registry__ability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .dnd-registry__ability-grid label { grid-template-columns: 1fr; text-align: center; }
 .dnd-registry__ability-grid input { text-align: center; }
-.dnd-registry__ability-grid output { color: var(--wine); font-weight: 700; }
+.dnd-registry__ability-grid output {
+  padding: 5px 7px; background: rgba(118,44,58,.09); color: var(--wine);
+  border: 1px solid rgba(118,44,58,.2); font: 700 11px Arial, sans-serif;
+}
 .dnd-registry button {
   border: 0; padding: 15px 17px; background: var(--wine); color: white;
   display: flex; justify-content: space-between; cursor: pointer;

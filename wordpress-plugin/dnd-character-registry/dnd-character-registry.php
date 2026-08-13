@@ -2,7 +2,7 @@
 /**
  * Plugin Name: D&D Character Registry
  * Description: Displays a D&D form and securely relays submissions to the Python API.
- * Version: 1.0.0
+ * Version: 2.0.1
  */
 
 if (!defined('ABSPATH')) {
@@ -15,14 +15,14 @@ function dnd_registry_render_form()
         'dnd-registry-form',
         plugin_dir_url(__FILE__) . 'assets/form.css',
         array(),
-        '1.0.0'
+        '2.0.1'
     );
 
     wp_enqueue_script(
         'dnd-registry-form',
         plugin_dir_url(__FILE__) . 'assets/form.js',
         array(),
-        '1.0.0',
+        '2.0.1',
         true
     );
 
@@ -83,12 +83,12 @@ function dnd_registry_submit_character(WP_REST_Request $request)
         'level'           => absint($input['level'] ?? 0),
         'alignment'       => sanitize_text_field($input['alignment'] ?? ''),
         'abilities'       => array(
-            'strength'     => absint($input['abilities']['strength'] ?? 0),
-            'dexterity'    => absint($input['abilities']['dexterity'] ?? 0),
-            'constitution' => absint($input['abilities']['constitution'] ?? 0),
-            'intelligence' => absint($input['abilities']['intelligence'] ?? 0),
-            'wisdom'       => absint($input['abilities']['wisdom'] ?? 0),
-            'charisma'     => absint($input['abilities']['charisma'] ?? 0),
+            'strength'     => absint($input['abilities']['strength'] ?? 10),
+            'dexterity'    => absint($input['abilities']['dexterity'] ?? 10),
+            'constitution' => absint($input['abilities']['constitution'] ?? 10),
+            'intelligence' => absint($input['abilities']['intelligence'] ?? 10),
+            'wisdom'       => absint($input['abilities']['wisdom'] ?? 10),
+            'charisma'     => absint($input['abilities']['charisma'] ?? 10),
         ),
         'notes'           => sanitize_textarea_field($input['notes'] ?? ''),
     );
