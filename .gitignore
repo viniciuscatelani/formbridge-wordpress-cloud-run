@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv*/
+.transcribe*/
+.env
+credentials.json
+.pytest_cache/
+local-data/
+.env.local

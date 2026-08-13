@@ -1,0 +1,47 @@
+.dnd-registry {
+  --ink: #282219;
+  --paper: #f7f0df;
+  --wine: #762c3a;
+  --gold: #b18a43;
+  max-width: 980px;
+  margin: 40px auto;
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  background: #191714;
+  box-shadow: 0 24px 60px rgba(25, 20, 12, .22);
+  color: var(--ink);
+  font-family: Georgia, serif;
+}
+.dnd-registry * { box-sizing: border-box; }
+.dnd-registry__intro { padding: 56px 44px; color: #eee5d2; }
+.dnd-registry__die {
+  width: 58px; height: 58px; display: grid; place-items: center;
+  border: 1px solid var(--gold); color: var(--gold); font-weight: bold;
+  transform: rotate(45deg); margin: 8px 0 42px;
+}
+.dnd-registry__eyebrow { color: var(--gold); font: 600 11px Arial, sans-serif; letter-spacing: .15em; text-transform: uppercase; }
+.dnd-registry h2 { color: #fff8e9; font-size: clamp(36px, 5vw, 56px); line-height: 1; margin: 14px 0 24px; }
+.dnd-registry h2 span { color: var(--gold); }
+.dnd-registry__intro > p:last-child { color: #bfb6a7; line-height: 1.65; }
+.dnd-registry__form { padding: 50px; background: var(--paper); display: grid; gap: 19px; }
+.dnd-registry label { display: grid; gap: 7px; font: 600 12px Arial, sans-serif; letter-spacing: .03em; }
+.dnd-registry small { font-weight: normal; color: #766d60; }
+.dnd-registry input, .dnd-registry select, .dnd-registry textarea {
+  width: 100%; padding: 12px 13px; border: 1px solid #cbbda6;
+  border-radius: 0; background: rgba(255,255,255,.6); font: 14px Arial, sans-serif;
+}
+.dnd-registry__row { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; }
+.dnd-registry button {
+  border: 0; padding: 15px 17px; background: var(--wine); color: white;
+  display: flex; justify-content: space-between; cursor: pointer;
+  font: 600 12px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase;
+}
+.dnd-registry button:disabled { opacity: .65; cursor: wait; }
+#dnd-registry-status { min-height: 20px; margin: -7px 0 0; font: 13px Arial, sans-serif; }
+#dnd-registry-status.success { color: #247047; }
+#dnd-registry-status.error { color: #9b243b; }
+@media (max-width: 720px) {
+  .dnd-registry { grid-template-columns: 1fr; }
+  .dnd-registry__intro, .dnd-registry__form { padding: 36px 28px; }
+}
+

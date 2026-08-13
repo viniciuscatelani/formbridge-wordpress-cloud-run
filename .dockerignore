@@ -1,0 +1,12 @@
+.git
+.env
+.env.*
+credentials.json
+.venv*
+.transcribe*
+.pytest_cache
+__pycache__
+local-data
+wordpress-plugin
+tests
+

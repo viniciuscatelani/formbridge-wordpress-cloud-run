@@ -1,0 +1,72 @@
+services:
+  database:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress-local-only
+      MARIADB_ROOT_PASSWORD: root-local-only
+    volumes:
+      - wordpress-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build: .
+    env_file:
+      - .env
+    environment:
+      STORAGE_BACKEND: google_sheets
+      GOOGLE_CREDENTIALS_FILE: /run/secrets/google-credentials.json
+      WORDPRESS_INTEGRATION_SECRET: local-dnd-relay-secret
+    volumes:
+      - ./credentials.json:/run/secrets/google-credentials.json:ro
+    ports:
+      - "8000:8000"
+
+  wordpress:
+    image: wordpress:php8.3-apache
+    depends_on:
+      database:
+        condition: service_healthy
+      api:
+        condition: service_started
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress-local-only
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: "1"
+      DND_CLOUD_RUN_URL: ${DND_CLOUD_RUN_URL:-http://api:8000}
+      DND_INTEGRATION_SECRET: ${DND_INTEGRATION_SECRET:-local-dnd-relay-secret}
+      WORDPRESS_CONFIG_EXTRA: |
+        // D&D integration settings are supplied as container environment variables.
+    volumes:
+      - wordpress-files:/var/www/html
+      - ./wordpress-plugin/dnd-character-registry:/var/www/html/wp-content/plugins/dnd-character-registry
+    ports:
+      - "8080:80"
+
+  wpcli:
+    image: wordpress:cli
+    depends_on:
+      database:
+        condition: service_healthy
+      wordpress:
+        condition: service_started
+    environment:
+      WORDPRESS_DB_HOST: database:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress-local-only
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress-files:/var/www/html
+      - ./wordpress-plugin/dnd-character-registry:/var/www/html/wp-content/plugins/dnd-character-registry
+    profiles: ["tools"]
+
+volumes:
+  wordpress-db:
+  wordpress-files:

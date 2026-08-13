@@ -1,0 +1,16 @@
+.gcloudignore
+.git
+.gitignore
+.env
+.env.*
+credentials.json
+.venv*
+.transcribe*
+.pytest_cache
+**/__pycache__/**
+**/*.pyc
+local-data
+wordpress-plugin
+tests
+compose.yaml
+
