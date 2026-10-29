@@ -1,8 +1,9 @@
 # FormBridge
 
-A portfolio-ready integration project that embeds a custom form in WordPress, relays
-submissions through server-side PHP to a FastAPI service on Google Cloud Run,
-and stores validated records in Google Sheets.
+FormBridge is an integration prototype that connects a WordPress form to an
+on-demand Python backend. It validates submissions, performs calculations, and
+writes results directly to Google Sheets, keeping credentials and authoritative
+calculation logic on the server while users submit through WordPress.
 
 The included demo is a D&D Guild Registry, but its architecture is
 designed for real form-to-spreadsheet workflows such as applications, contest
@@ -10,6 +11,45 @@ rubrics, internal evaluations, surveys, and lead capture.
 
 > **Demo:** D&D character registration  
 > **Reusable core:** WordPress -> secure Python API -> Google Sheets
+
+## Why this project exists
+
+I built FormBridge after a friend described a contest at her workplace: participants needed to
+submit scores through a form, calculate final results, and collect them in a
+spreadsheet. The company's website already used WordPress, and Google Sheets
+was the intended destination for the results.
+
+The company proceeded with a manual process before the prototype was ready.
+FormBridge was not adopted, so I present it here as a portfolio prototype
+without claims of production use or measured business impact.
+
+My goal is to demonstrate the reusable integration pattern. The D&D Guild
+Registry provides a complete example of that pattern; the weighted-evaluation
+API shows how it can also support the original scoring use case.
+
+## What the integration enables
+
+- **Keep the WordPress experience.** An existing form can retain its appearance
+  and user flow while its submission handling is connected to the backend.
+  Integration still requires submission wiring; it does not require a frontend
+  redesign. This repository supplies a custom plugin and form as the example.
+- **Keep credentials server-side.** The browser submits to WordPress, which
+  relays requests using a private integration secret. Google authentication
+  happens in the backend. Neither credential is embedded in browser JavaScript.
+  See [SECURITY.md](SECURITY.md) for the security model and limitations.
+- **Process submissions on demand.** Cloud Run hosts the containerized API and
+  allows it to scale to zero, avoiding a continuously running server instance
+  that I would need to maintain. See [DEPLOYMENT.md](DEPLOYMENT.md) for
+  deployment configuration.
+- **Calculate before storing.** Python validates inputs and calculates the
+  authoritative results. Submission rows contain computed values rather than
+  spreadsheet formulas for the scoring logic. The D&D form also includes visible
+  browser previews; these are repeated and verified on the server. Separate
+  dashboard formulas summarize the stored data.
+- **Deliver results where they are needed.** The backend writes directly to the
+  configured Google Sheet, so staff can access results there without exporting,
+  downloading, and uploading an intermediate file. Spreadsheet sharing and
+  service configuration are part of the initial setup.
 
 ## Current release
 
@@ -95,6 +135,29 @@ Level | Alignment | STR/DEX/CON/INT/WIS/CHA and modifiers | Ability Total | Note
 - WordPress plugin using PHP, HTML, CSS, and JavaScript
 - MariaDB and Docker Compose for local WordPress development
 - Pytest and FastAPI TestClient
+
+## Technology choices and tradeoffs
+
+| Choice | Reason for this prototype | Tradeoff |
+| --- | --- | --- |
+| WordPress | I chose it to match the company's existing website and preserve its familiar interface. | Requires a PHP integration layer and WordPress configuration. |
+| Python and FastAPI | I was familiar with these tools and could implement request validation, scoring logic, and the API straightforwardly. | Adds a separately deployed service alongside WordPress. |
+| Google Sheets | I used it to place results directly in the spreadsheet staff intended to use. | Convenient for this prototype, but not a transactional database; concurrent duplicate checks are not atomic. |
+| Google Cloud Run | I chose it to run the FastAPI container on demand and access Sheets through a Google service identity without deploying a Google JSON key. | Requires cloud configuration and can introduce cold-start latency when scaling from zero. |
+
+I also considered AWS Lambda for on-demand compute. I chose Cloud Run
+because deploying the existing FastAPI application as a container
+and configuring access to Google Sheets offered a more straightforward path
+for my chosen stack. This was an implementation-effort decision,
+not a claim that Lambda could not support the workflow or a benchmark of the
+two platforms.
+
+The prototype demonstrates the submission-to-spreadsheet path. An operational
+contest system would also need decisions about judge identity, trusted rubric
+configuration, deadlines, and repeat-evaluation rules. The current evaluation
+API accepts criteria and weights from its caller; it does not enforce a
+centrally configured contest rubric. See [SECURITY.md](SECURITY.md) for further
+production considerations.
 
 ## Repository structure
 
@@ -212,8 +275,8 @@ formulas plus a native characters-by-class chart.
 Possible future extensions include race/species, background, proficiencies,
 equipment, judge authentication, contest deadlines, or a dedicated rubric UI.
 
-The architecture is already the most valuable part of the project. Expanding
-the domain model is worthwhile when it demonstrates additional engineering,
+I see the architecture as the most valuable part of the project. I would expand
+the domain model when it demonstrates additional engineering,
 such as conditional validation, derived values, duplicate prevention, tests,
 or a useful spreadsheet dashboard—not merely a larger number of text fields.
 
